@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 public class EmployeeRepositoryTests {
@@ -123,5 +124,49 @@ public class EmployeeRepositoryTests {
         // then-verity the result
         Assertions.assertThat(updatedEmployee.getEmail()).isEqualTo("suri@gmail.com");
         Assertions.assertThat(updatedEmployee.getLastName()).isEqualTo("suri");
+    }
+
+    // JUnit test for delete employee operation
+    @DisplayName("JUnit test for delete employee operation")
+    @Test
+    public void givenEmployeeObject_whenDelete_thenRemoveEmployee() {
+        // given-precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("suresh")
+                .lastName("suri")
+                .email("suri@gmail.com")
+                .build();
+
+        employeeRepository.save(employee);
+
+        // when-action or behaviour that we are going to test
+
+        // employeeRepository.delete(employee);
+        employeeRepository.deleteById(employee.getId());
+        Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
+
+        // then-verity the result
+        Assertions.assertThat(employeeOptional).isEmpty();
+    }
+
+    // JUnit test for custom query using JPQL index
+    @DisplayName("JUnit test for custom query using JPQL index")
+    @Test
+    public void givenFirstNameAndLastName_whenFindByJPQL_thenReturnEmployeeObject() {
+        // given-precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("suresh")
+                .lastName("suri")
+                .email("suri@gmail.com")
+                .build();
+        employeeRepository.save(employee);
+        String firstName="suresh";
+        String lastName="suri";
+
+        // when-action or behaviour that we are going to test
+        Employee savedEmployee = employeeRepository.findByJPQL(firstName, lastName);
+
+        // then-verity the result
+        Assertions.assertThat(savedEmployee).isNotNull();
     }
 }
