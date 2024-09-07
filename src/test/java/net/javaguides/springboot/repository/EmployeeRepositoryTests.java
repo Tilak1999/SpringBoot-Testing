@@ -243,5 +243,4 @@ public class EmployeeRepositoryTests {
         // then-verity the result
         Assertions.assertThat(savedEmployee).isNotNull();
     }
-
 }
