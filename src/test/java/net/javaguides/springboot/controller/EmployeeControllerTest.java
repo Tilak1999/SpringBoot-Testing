@@ -129,7 +129,7 @@ public class EmployeeControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    // / -ve Scenario
+    // +ve Scenario
     // Junit test for update employee REST API
     @DisplayName("Junit test for update employee REST API")
     @Test
@@ -166,6 +166,42 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(updatedEmployee.getEmail())));
 
     }
+
+    // / -ve Scenario
+    // Junit test for update employee REST API
+    @DisplayName("Junit test for update employee REST API")
+    @Test
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturn404() throws Exception {
+        // given-precondition or setup
+        long employeeId = 1L;
+        Employee savedEmployee = Employee.builder()
+                .firstName("Suresh")
+                .lastName("basya")
+                .email("suresh@gmail.com")
+                .build();
+
+        // below info will be updated
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Undertaker")
+                .lastName("Bob")
+                .email("undertaker@gmail.com")
+                .build();
+
+        BDDMockito.given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+        BDDMockito.given(employeeService.updateEmployee(Mockito.any(Employee.class)))
+                .willAnswer((invocation) -> invocation.getArgument(0));
+
+        // when-action or behaviour that we are going to test
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
+
+        // then-verity the result
+        response.andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+
+    }
+
 
 }
 
