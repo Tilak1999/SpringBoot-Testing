@@ -129,12 +129,14 @@ public class EmployeeControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    // / -ve Scenario
     // Junit test for update employee REST API
+    @DisplayName("Junit test for update employee REST API")
     @Test
-    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnUpdatedEmployeeObject() {
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnUpdatedEmployeeObject() throws Exception {
         // given-precondition or setup
         long employeeId = 1L;
-        Employee savedemployee = Employee.builder()
+        Employee savedEmployee = Employee.builder()
                 .firstName("Suresh")
                 .lastName("basya")
                 .email("suresh@gmail.com")
@@ -147,12 +149,22 @@ public class EmployeeControllerTest {
                 .email("undertaker@gmail.com")
                 .build();
 
-        BDDMockito.given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedemployee));
-        BDDMockito.given(employeeService.updateEmployee(Mockito.any(Employee.class)));
+        BDDMockito.given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedEmployee));
+        BDDMockito.given(employeeService.updateEmployee(Mockito.any(Employee.class)))
+                .willAnswer((invocation) -> invocation.getArgument(0));
 
         // when-action or behaviour that we are going to test
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
 
         // then-verity the result
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", CoreMatchers.is(updatedEmployee.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", CoreMatchers.is(updatedEmployee.getLastName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(updatedEmployee.getEmail())));
+
     }
 
 }
