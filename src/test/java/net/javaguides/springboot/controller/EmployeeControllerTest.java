@@ -202,6 +202,20 @@ public class EmployeeControllerTest {
 
     }
 
+    // JUnit test for delete employee REST API
+    @DisplayName("JUnit test for delete employee REST API")
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenReturn200() throws Exception {
+        // given-precondition or setup
+        long employeeId = 1L;
+        BDDMockito.willDoNothing().given(employeeService).deleteEmployee(employeeId);
 
+        // when-action or behaviour that we are going to test
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.delete("/api/employees/{id}", employeeId));
+
+        // then-verity the result
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
 
