@@ -23,7 +23,6 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Testcontainers
 public class EmployeeControllerIT extends AbstractContainerBaseTest {
 
     @Autowired
